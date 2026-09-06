@@ -1,0 +1,7 @@
+CompileFlags:
+  Add:
+    - -target
+    - i686-elf
+    - -ffreestanding
+    - -fno-builtin
+    - -D__i386__
