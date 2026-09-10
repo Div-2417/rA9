@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "../drivers/vga.h"
+#include "../libc/include/string.h"
 
 void InitTerminal(void);
 void terminalPutCharAt(char c, enum VGAColour colour, size_t x, size_t y);

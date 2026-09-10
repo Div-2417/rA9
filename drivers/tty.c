@@ -30,7 +30,7 @@ void terminalPutChar(char c){
 
     if (c == '\n') {
         terminalColoumn = 0;
-        if (terminalRow++ == VGA_HEIGHT ) {
+        if (++terminalRow == VGA_HEIGHT ) {
             terminalRow =0;
         }
 
@@ -44,13 +44,6 @@ void terminalPutChar(char c){
 		if (++terminalRow == VGA_HEIGHT)
 			terminalRow = 0;
     }
-}
-
-size_t strlen(const char* s){
-    size_t len = 0;
-    while (s[len])
-        len++;
-    return len;
 }
 
 void terminalPutString(const char* s){
