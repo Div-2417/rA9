@@ -1,6 +1,7 @@
 #include "drivers/io.h"
 #include <kernel/tty.h>
 #include <kernel/kprintf.h>
+#include <kernel/gdt.h>
 
 // cross compiler checks
 #if defined(__linux__)
@@ -18,6 +19,8 @@ void kernel_main(){
 
     outb(0x3D4, 0x0F);
     uint8_t x = inb(0x3D5);
+
+    gdtInstall();
 
     kprintf("Hello, %s!\n", "rA9");
     kprintf("Dec: %d, Neg: %d\n", 42, -7);
