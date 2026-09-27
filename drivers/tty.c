@@ -1,4 +1,6 @@
+#include "drivers/vga.h"
 #include <kernel/tty.h>
+#include <stdint.h>
 
 //terminal state
 static size_t terminalRow, terminalColoumn;
@@ -57,4 +59,14 @@ void terminalPutString(const char* s){
 
 void terminalSetColour(uint8_t colour){
     terminalColour = colour;
+}
+
+void terminalScroll(void){
+    memmove(terminalBuffer, terminalBuffer+VGA_WIDTH,(VGA_HEIGHT)*(VGA_WIDTH)*sizeof(uint16_t));
+
+     for (size_t x = 0; x < VGA_WIDTH; x++) {
+        size_t index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;
+
+        terminalBuffer[index] = vga_entry(' ', terminalColour);
+    }
 }
