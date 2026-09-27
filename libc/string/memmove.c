@@ -1,8 +1,7 @@
 #include <string.h>
 #include <stddef.h>
 
-void *memmove(void *desptr, const void *srcptr, size_t n)
-{
+void *memmove(void *desptr, const void *srcptr, size_t n){
     unsigned char *des = desptr;
 	const unsigned char *src = srcptr;
     size_t i;
