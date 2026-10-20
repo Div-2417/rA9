@@ -3,3 +3,6 @@
 
 # bin files
 *.bin
+
+# project tracking
+objective.md

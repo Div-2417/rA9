@@ -9,7 +9,7 @@ struct gdtPtr gdtPtr;
 void gdtEncode(int index, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags){
 
     gdt[index].baseLow = (uint16_t)(base & 0xFFFF);
-    gdt[index].baseMid = (int8_t)((base >> 16) & 0xFF);
+    gdt[index].baseMid = (uint8_t)((base >> 16) & 0xFF);
     gdt[index].baseHigh = (uint8_t)((base >> 24) & 0xFF);
 
     gdt[index].granularity = (uint8_t)((limit >>16) & 0x0F) | ((flags & 0x0F)<< 4);
