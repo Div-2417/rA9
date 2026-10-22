@@ -19,8 +19,8 @@ static const char* exception[32]={
 
 struct isrFrame{
     uint32_t gs,fs,es,ds;
-    uint32_t edi,esi,ebp, espDummy,ebx,ecx,eax;
-    uint32_t iniNo, errCode;
+    uint32_t edi,esi,ebp, espDummy,ebx,edx,ecx,eax;
+    uint32_t intNo, errCode;
     uint32_t eip,cs,eFlags;
 } __attribute__((packed));
 
@@ -39,7 +39,7 @@ void pic_remap(void) {
 }
 
 void isr_handler(struct isrFrame* frame) {
-    uint32_t vector = frame->iniNo;
+    uint32_t vector = frame->intNo;
     uint32_t error  = frame->errCode;
 
     if (vector < 32) {
