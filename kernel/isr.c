@@ -38,6 +38,23 @@ void pic_remap(void) {
     outb(0x21, 0xFF);  outb(0xA1, 0xFF);   // mask all
 }
 
+void pic_unmask(uint8_t irq) {
+   
+    uint16_t port;
+    uint8_t mask;
+
+    // X86 has 2 cascaded PIC, 0–7 belong to master PIC and 8-15 to slave PIC
+    if (irq < 8) {
+        port = PIC1_DATA;
+    } else {
+        port = PIC2_DATA;
+        irq -= 8;
+    }
+
+    mask = inb(port) & ~(1 << irq);
+    outb(port, mask);
+}
+
 void isr_handler(struct isrFrame* frame) {
     uint32_t vector = frame->intNo;
     uint32_t error  = frame->errCode;
