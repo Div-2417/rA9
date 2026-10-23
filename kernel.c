@@ -1,4 +1,5 @@
 #include "drivers/io.h"
+#include "drivers/pit.h"
 #include "kernel/idt.h"
 #include <kernel/tty.h>
 #include <kernel/kprintf.h>
@@ -31,7 +32,13 @@ void kernel_main(){
     kprintf("Char: %c, Percent: %%\n", 'Z');
     kprintf("Zero: %d, Max hex: %x\n", 0, 4294967295u);
 
+   uint32_t last = 0;
     for (;;) {
-        asm volatile("hlt");
+    asm volatile("hlt");
+    uint32_t s = pitTicks() / 100;
+    if (s != last) {
+        last = s;
+        kprintf("uptime: %d s\n", (int)s);
     }
+    } 
 }
