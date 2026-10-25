@@ -18,16 +18,21 @@
 stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
- 
+
 .section .text
 .global _start
 .type _start, @function
 _start:
-	# kernel now loaded by the bootloader
 
 	# point esp register to top the stack
 	mov $stack_top, %esp
+
+	# Multiboot entry state: eax = magic (0x2BADB002), ebx = multiboot info ptr.
+	push %ebx
+	push %eax
 	call kernel_main
+	add $8, %esp
+
 	cli
 
 1:	hlt
