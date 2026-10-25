@@ -101,7 +101,7 @@ int scTranslate(uint8_t scanCode){
 static void scProcess(uint8_t sc){
     if (sc == 0xE0) { extPrefix = 1; return; }
 
-    if (extPrefix) {                 /* swallow extended byte for now */
+    if (extPrefix) {
         extPrefix = 0;
         return;
     }
@@ -109,24 +109,23 @@ static void scProcess(uint8_t sc){
     uint8_t released = sc & 0x80;
     uint8_t code     = sc & 0x7F;
 
-    /* modifiers: track both press and release */
     if (code == SC_LSHIFT || code == SC_RSHIFT) { shiftDown = !released; return; }
     if (code == SC_LCTRL)                       { ctrlDown  = !released; return; }
     if (code == SC_CAPS) { if (!released) capsOn ^= 1; return; }
 
-    if (released) return;            /* no char on release */
+    if (released) return;
 
     char c = kbMap[code];
-    if (c == 0) return;              /* unmapped key */
+    if (c == 0) return;
 
     int isLetter = (c >= 'a' && c <= 'z');
 
     if (ctrlDown && isLetter) {
-        c = c & 0x1F;                /* Ctrl+A=1 ... Ctrl+L=12 ... Ctrl+C=3 */
+        c = c & 0x1F;
     } else if (isLetter) {
-        if (shiftDown ^ capsOn) c -= 32;   /* upper-case */
+        if (shiftDown ^ capsOn) c -= 32;
     } else if (shiftDown) {
-        c = kbMapShift[code];        /* symbols/digits only */
+        c = kbMapShift[code];
     }
 
     kbPush((uint8_t)c);
@@ -142,13 +141,10 @@ void kbInit(void) {
     kbHead = kbTail = 0;
     shiftDown = ctrlDown = capsOn = extPrefix = 0;
 
-    /* drain stale bytes, bounded so never hang */
     for (int i = 0; i < 64 && (inb(kbStatus) & 0x01); i++)
         (void)inb(kbData);
 
-    /* register handler for vector 0x21: use YOUR idt API */
     register_interrupt_handler(1, kbHandler);
 
-    /* unmask IRQ1 on master PIC (mask port 0x21) */
     outb(0x21, inb(0x21) & ~(1 << 1));
 }
