@@ -2,6 +2,8 @@
 #include <kernel/tty.h>
 #include <stdint.h>
 
+void terminalScroll(void);
+
 //terminal state
 static size_t terminalRow, terminalColoumn;
 static uint8_t terminalColour;
@@ -32,8 +34,9 @@ void terminalPutChar(char c){
 
     if (c == '\n') {
         terminalColoumn = 0;
-        if (++terminalRow == VGA_HEIGHT ) {
-            terminalRow =0;
+        if (++terminalRow == VGA_HEIGHT) {
+            terminalScroll();
+            terminalRow = VGA_HEIGHT - 1;
         }
 
         return;
@@ -42,9 +45,11 @@ void terminalPutChar(char c){
     terminalPutCharAt(c, terminalColour, terminalColoumn, terminalRow);
 
     if (++terminalColoumn == VGA_WIDTH) {
-		terminalColoumn = 0;
-		if (++terminalRow == VGA_HEIGHT)
-			terminalRow = 0;
+        terminalColoumn = 0;
+        if (++terminalRow == VGA_HEIGHT) {
+            terminalScroll();
+            terminalRow = VGA_HEIGHT - 1;
+        }
     }
 }
 
