@@ -13,5 +13,6 @@ void terminalPutChar(char c);
 void terminalPutString(const char* s);
 void terminalSetColour(uint8_t colour);
 void termminalScroll(void);
+void terminalClear(void);
 
 #endif

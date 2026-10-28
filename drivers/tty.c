@@ -1,5 +1,6 @@
 #include "drivers/vga.h"
 #include <kernel/tty.h>
+#include <stddef.h>
 #include <stdint.h>
 
 void terminalScroll(void);
@@ -25,6 +26,19 @@ void InitTerminal(){
 }
 
 void terminalPutCharAt(char c, enum VGAColour colour, size_t x, size_t y){
+    if (c == '\b') {
+    if (terminalColoumn > 0) {
+        terminalColoumn--;
+    } else if (terminalRow > 0) {
+        terminalRow--;
+        terminalColoumn = VGA_WIDTH - 1;
+    } else {
+        return;
+    }
+    terminalPutCharAt(' ', terminalColour, terminalColoumn, terminalRow);
+    return;
+}
+
     size_t index = y*VGA_WIDTH + x;
     terminalBuffer[index] = vga_entry(c, colour);
    
@@ -74,4 +88,15 @@ void terminalScroll(void){
 
         terminalBuffer[index] = vga_entry(' ', terminalColour);
     }
+}
+
+void terminalClear(void){
+  for (size_t y=0; y< VGA_HEIGHT;y++) {
+    for (size_t x=0; x< VGA_WIDTH; x++) {
+      size_t index = y*VGA_WIDTH + x;
+      terminalBuffer[index] = vga_entry(' ', terminalColour);
+    }
+  }
+  terminalRow = 0;
+  terminalColoumn = 0;
 }
