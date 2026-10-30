@@ -7,6 +7,7 @@
 #include "drivers/keyboard.h"
 #include "libc/include/string.h"
 #include "drivers/io.h"
+#include "pmm.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -129,6 +130,26 @@ static int meminfo(int argc, char** argv){
   uint32_t kernel_end = (uint32_t)_kernel_end;
   kprintf("\nKernel: 0x%x - 0x%x (%u KB)\n",
   kernel_start, kernel_end, (kernel_end - kernel_start + 1023) / 1024);
+
+  kprintf("\nPMM Information:\n");
+  kprintf("  Total blocks: %u\n", pmmGetBlockCount());
+  kprintf("  Used blocks: %u\n", pmmGetUsedBlockCount());
+  kprintf("  Free blocks: %u\n", pmmGetFreeBlockCount());
+
+  uint32_t pmm_total_blocks = pmmGetBlockCount();
+  uint32_t pmm_used_blocks = pmmGetUsedBlockCount();
+  uint32_t pmm_free_blocks = pmmGetFreeBlockCount();
+  kprintf("  Total memory: %u KB (%u MB)\n",
+  pmm_total_blocks * pmmBlockSize / 1024,
+  pmm_total_blocks * pmmBlockSize / (1024 * 1024));
+  kprintf("  Used memory: %u KB (%u MB)\n",
+  pmm_used_blocks * pmmBlockSize / 1024,
+  pmm_used_blocks * pmmBlockSize / (1024 * 1024));
+  kprintf("  Free memory: %u KB (%u MB)\n",
+  pmm_free_blocks * pmmBlockSize / 1024,
+  pmm_free_blocks * pmmBlockSize / (1024 * 1024));
+  kprintf("  Bitmap size: %u bytes\n", pmmGetBitmapSize());
+  kprintf("  Bitmap location: 0x%x\n", (uint32_t)pmmGetBitmapAddr());
 
   return 0;
 }
