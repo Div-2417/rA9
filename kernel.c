@@ -6,6 +6,7 @@
 #include <kernel/isr.h>
 #include "drivers/keyboard.h"
 #include "kernel/shell.h"
+#include "kernel/pmm.h"
 
 #include <stdint.h>
 
@@ -19,10 +20,12 @@
 #endif
 
 multiboot_info_t* g_multiboot_info = NULL;
+extern char _kernel_end[];
 
 void kernel_main(uint32_t magic, uint32_t addr){
     (void)magic;
-    g_multiboot_info = (multiboot_info_t*)addr;  // PMM will consume these later
+    g_multiboot_info = (multiboot_info_t*)addr;
+    pmmInit(g_multiboot_info->mem_upper, (physicalAddr)_kernel_end);
     InitTerminal();
 
     terminalPutString("hello \n MFs!!!");

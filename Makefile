@@ -15,8 +15,15 @@ rA9.bin: $(OBJ) linker.ld
 %.o: %.s
 	$(AS) $< -o $@
 
-run: rA9.bin
-	qemu-system-i386 -kernel rA9.bin
+run: rA9.iso
+	qemu-system-i386 -cdrom rA9.iso
+
+iso: rA9.bin
+	mkdir -p iso/boot/grub
+	cp rA9.bin iso/boot/rA9.bin
+	echo 'menuentry "rA9" { multiboot /boot/rA9.bin }' > iso/boot/grub/grub.cfg
+	grub-mkrescue -o rA9.iso iso 2>/dev/null
 
 clean:
-	rm -f $(OBJ) rA9.bin
+	rm -f $(OBJ) rA9.bin rA9.iso
+	rm -rf iso
