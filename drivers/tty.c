@@ -50,6 +50,8 @@ void terminalPutChar(char c){
             terminalScroll();
             terminalRow = VGA_HEIGHT - 1;
         }
+        return;
+    }
 
     if (c == '\b') {
         terminalPutCharAt(c, terminalColour, terminalColoumn, terminalRow);
@@ -81,7 +83,7 @@ void terminalSetColour(uint8_t colour){
 }
 
 void terminalScroll(void){
-    memmove(terminalBuffer, terminalBuffer+VGA_WIDTH,(VGA_HEIGHT)*(VGA_WIDTH)*sizeof(uint16_t));
+    memmove(terminalBuffer, terminalBuffer+VGA_WIDTH,(VGA_HEIGHT-1)*(VGA_WIDTH)*sizeof(uint16_t));
 
      for (size_t x = 0; x < VGA_WIDTH; x++) {
         size_t index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;

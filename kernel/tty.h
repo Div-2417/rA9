@@ -12,7 +12,7 @@ void terminalPutCharAt(char c, enum VGAColour colour, size_t x, size_t y);
 void terminalPutChar(char c);
 void terminalPutString(const char* s);
 void terminalSetColour(uint8_t colour);
-void termminalScroll(void);
+void terminalScroll(void);
 void terminalClear(void);
 
 #endif
