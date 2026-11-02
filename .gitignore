@@ -4,6 +4,13 @@
 # bin files
 *.bin
 
+# ISO files
+rA9.iso
+iso/
+
 # project tracking
 objective.md
 *.log
+
+# local readme
+README.md

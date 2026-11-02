@@ -7,6 +7,7 @@
 #include "drivers/keyboard.h"
 #include "kernel/shell.h"
 #include "kernel/pmm.h"
+#include "kernel/multiboot.h"
 
 #include <stdint.h>
 
@@ -20,12 +21,30 @@
 #endif
 
 multiboot_info_t* g_multiboot_info = NULL;
-extern char _kernel_end[];
+extern char _kernel_start[], _kernel_end[];
 
-void kernel_main(uint32_t magic, uint32_t addr){
+void kernel_main(uint32_t magic, uint32_t addr) {
     (void)magic;
     g_multiboot_info = (multiboot_info_t*)addr;
+
     pmmInit(g_multiboot_info->mem_upper, (physicalAddr)_kernel_end);
+
+    if (g_multiboot_info->flags & (1 << 6)) {
+        multiboot_mmap_entry_t* mmap = (multiboot_mmap_entry_t*)g_multiboot_info->mmap_addr;
+        uint32_t mmap_end = g_multiboot_info->mmap_addr + g_multiboot_info->mmap_length;
+
+        while ((uint32_t)mmap < mmap_end) {
+            if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE) {
+                pmmInitRegion(mmap->addr, mmap->len);
+            }
+            mmap = (multiboot_mmap_entry_t*)((uint32_t)mmap + mmap->size + sizeof(mmap->size));
+        }
+    }
+
+    pmmDeInitRegion((physicalAddr)_kernel_start, (physicalAddr)_kernel_end - (physicalAddr)_kernel_start);
+    pmmDeInitRegion(pmmGetBitmapAddr(), pmmGetBitmapSize());
+    pmmDeInitRegion((physicalAddr)g_multiboot_info, sizeof(multiboot_info_t));
+
     InitTerminal();
 
     terminalPutString("hello \n MFs!!!");

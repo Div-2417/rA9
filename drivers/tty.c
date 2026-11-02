@@ -22,26 +22,24 @@ void InitTerminal(){
             terminalBuffer[index] = vga_entry(' ', terminalColour);
         }
     }
-
 }
 
 void terminalPutCharAt(char c, enum VGAColour colour, size_t x, size_t y){
     if (c == '\b') {
-    if (terminalColoumn > 0) {
-        terminalColoumn--;
-    } else if (terminalRow > 0) {
-        terminalRow--;
-        terminalColoumn = VGA_WIDTH - 1;
-    } else {
+        if (terminalColoumn > 0) {
+            terminalColoumn--;
+        } else if (terminalRow > 0) {
+            terminalRow--;
+            terminalColoumn = VGA_WIDTH - 1;
+        } else {
+            return;
+        }
+        terminalPutCharAt(' ', terminalColour, terminalColoumn, terminalRow);
         return;
     }
-    terminalPutCharAt(' ', terminalColour, terminalColoumn, terminalRow);
-    return;
-}
 
     size_t index = y*VGA_WIDTH + x;
     terminalBuffer[index] = vga_entry(c, colour);
-   
 }
 
 void terminalPutChar(char c){
@@ -53,6 +51,8 @@ void terminalPutChar(char c){
             terminalRow = VGA_HEIGHT - 1;
         }
 
+    if (c == '\b') {
+        terminalPutCharAt(c, terminalColour, terminalColoumn, terminalRow);
         return;
     }
 
@@ -85,7 +85,6 @@ void terminalScroll(void){
 
      for (size_t x = 0; x < VGA_WIDTH; x++) {
         size_t index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;
-
         terminalBuffer[index] = vga_entry(' ', terminalColour);
     }
 }

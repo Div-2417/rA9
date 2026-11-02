@@ -8,18 +8,12 @@
 #include "libc/include/string.h"
 #include "drivers/io.h"
 #include "pmm.h"
+#include "multiboot.h"
 
 #include <stddef.h>
 #include <stdint.h>
 
 extern char _kernel_start[], _kernel_end[];
-
-typedef struct {
-    uint32_t size;
-    uint64_t addr;
-    uint64_t len;
-    uint32_t type;
-} __attribute__((packed)) multiboot_mmap_entry_t;
 
 #define LineMax 256
 #define ArgsMax 16
@@ -118,8 +112,8 @@ static int meminfo(int argc, char** argv){
     uint32_t mmap_end = g_multiboot_info->mmap_addr + g_multiboot_info->mmap_length;
 
     while ((uint32_t)mmap < mmap_end) {
-      kprintf("  Base: 0x%llx, Length: 0x%llx, Type: %u\n",
-        mmap->addr, mmap->len, mmap->type);
+      kprintf("  Base: 0x%x, Length: 0x%x, Type: %u\n",
+        (uint32_t)mmap->addr, (uint32_t)mmap->len, mmap->type);
       mmap = (multiboot_mmap_entry_t*)((uint32_t)mmap + mmap->size + sizeof(mmap->size));
     }
   } else {
