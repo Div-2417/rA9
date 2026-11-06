@@ -47,7 +47,16 @@ void kernel_main(uint32_t magic, uint32_t addr) {
 
     InitTerminal();
 
-    terminalPutString("hello \n MFs!!!");
+    terminalSetColour(vga_entryColour(VGA_WHITE, VGA_BLACK));
+    kprintf("           ___   ____\n");
+    kprintf("     _____/   | / __ \\\n");
+    kprintf("    / ___/ /| |/ /_/ /\n");
+    kprintf("   / /  / ___ |\\__, /\n");
+    kprintf("  / /  /_/  |_/____/\n");
+    kprintf(" /_/ x86 kernel\n");
+    kprintf("        By Divyanshu Malekar\n");
+ 
+    terminalSetColour(vga_entryColour(VGA_LIGHT_GREY, VGA_BLACK));
 
     gdtInstall();
     pic_remap();      // mask all IRQs
